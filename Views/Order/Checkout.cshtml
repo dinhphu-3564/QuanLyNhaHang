@@ -1,0 +1,357 @@
+@model Web_QLNhaHang.Models.Order
+@{
+    ViewData["Title"] = "Thanh toán";
+    var cart = ViewBag.Cart as List<Web_QLNhaHang.Models.CartItem>;
+    var total = (decimal)ViewBag.Total;
+}
+
+<style>
+    .checkout-section {
+        padding: 60px 0;
+        background: #f8f9fa;
+        min-height: 80vh;
+    }
+    .checkout-card {
+        border: none;
+        border-radius: 15px;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+        overflow: hidden;
+        background: white;
+        margin-bottom: 1.5rem;
+    }
+    .checkout-card .card-header {
+        background: linear-gradient(135deg, #1a472a 0%, #2d5a3d 100%);
+        color: white;
+        padding: 1.25rem 1.5rem;
+        border: none;
+    }
+    .checkout-card .card-header h5 {
+        margin: 0;
+        font-weight: 600;
+        font-size: 1.1rem;
+    }
+    .checkout-card .card-body {
+        padding: 1.5rem;
+    }
+    .form-label {
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 0.5rem;
+    }
+    .form-control {
+        border: 2px solid #e9ecef;
+        border-radius: 10px;
+        padding: 0.75rem 1rem;
+        transition: all 0.3s ease;
+    }
+    .form-control:focus {
+        border-color: #1a472a;
+        box-shadow: 0 0 0 0.2rem rgba(26, 71, 42, 0.15);
+    }
+    .form-control-lg {
+        font-size: 1rem;
+    }
+    .payment-option {
+        border: 2px solid #e9ecef;
+        border-radius: 12px;
+        padding: 1.25rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        margin-bottom: 1rem;
+        background: white;
+        display: flex !important;
+        flex-direction: row !important;
+        align-items: center !important;
+    }
+    .payment-option:hover {
+        border-color: #1a472a;
+        background: #f8f9fa;
+    }
+    .payment-option.selected {
+        border-color: #1a472a;
+        background: linear-gradient(135deg, #f0fff4 0%, #e6f7ed 100%);
+    }
+    .payment-option input[type="radio"] {
+        display: none;
+    }
+    .payment-icon {
+        width: 50px;
+        height: 50px;
+        min-width: 50px;
+        border-radius: 10px;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        font-size: 1.5rem;
+        margin-right: 1rem;
+        flex-shrink: 0;
+    }
+    .cod-icon {
+        background: linear-gradient(135deg, #ffc107 0%, #ff9800 100%);
+        color: white;
+    }
+    .vnpay-icon {
+        background: linear-gradient(135deg, #0066cc 0%, #004999 100%);
+        color: white;
+    }
+    .payment-info {
+        flex: 1;
+        min-width: 0;
+    }
+    .payment-info strong {
+        display: block;
+        margin-bottom: 0.25rem;
+        color: #333;
+        font-size: 1rem;
+    }
+    .payment-info p {
+        margin: 0;
+        color: #666;
+        font-size: 0.875rem;
+    }
+    .vnpay-logo {
+        height: 20px;
+        margin-left: 8px;
+        vertical-align: middle;
+    }
+    .cart-summary-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1rem 0;
+        border-bottom: 1px solid #e9ecef;
+    }
+    .cart-summary-item:last-child {
+        border-bottom: none;
+    }
+    .cart-item-image {
+        width: 60px;
+        height: 60px;
+        object-fit: cover;
+        border-radius: 10px;
+        margin-right: 15px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    .cart-item-info {
+        flex: 1;
+    }
+    .cart-item-name {
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 0.25rem;
+    }
+    .cart-item-qty {
+        font-size: 0.875rem;
+        color: #666;
+    }
+    .cart-item-price {
+        font-weight: 700;
+        color: #1a472a;
+        font-size: 1rem;
+    }
+    .cart-total {
+        background: linear-gradient(135deg, #1a472a 0%, #2d5a3d 100%);
+        color: white;
+        padding: 1.25rem 1.5rem;
+        border-radius: 12px;
+        margin-top: 1.5rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    .cart-total-label {
+        font-size: 1.1rem;
+        font-weight: 500;
+    }
+    .cart-total-amount {
+        font-size: 1.5rem;
+        font-weight: 700;
+    }
+    .btn-checkout {
+        background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+        border: none;
+        padding: 1rem 2rem;
+        font-size: 1.1rem;
+        font-weight: 600;
+        border-radius: 50px;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        color: white;
+    }
+    .btn-checkout:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 30px rgba(40, 167, 69, 0.4);
+        color: white;
+    }
+    .vnpay-logo {
+        height: 25px;
+        margin-left: 0.5rem;
+        vertical-align: middle;
+    }
+    .security-note {
+        text-align: center;
+        margin-top: 1rem;
+        color: #666;
+        font-size: 0.875rem;
+    }
+    .security-note i {
+        color: #28a745;
+    }
+    .order-summary-sticky {
+        position: sticky;
+        top: 100px;
+    }
+</style>
+
+<!-- Page Banner -->
+<div class="page-banner">
+    <div class="container">
+        <h1>Thanh toán đơn hàng</h1>
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Trang chủ</a></li>
+                <li class="breadcrumb-item"><a asp-controller="Cart" asp-action="Index">Giỏ hàng</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Thanh toán</li>
+            </ol>
+        </nav>
+    </div>
+</div>
+
+<div class="checkout-section">
+    <div class="container">
+        <form asp-action="PlaceOrder" method="post">
+            <div class="row g-4">
+                <!-- Customer Information -->
+                <div class="col-lg-7">
+                    <div class="checkout-card">
+                        <div class="card-header">
+                            <h5><i class="fas fa-user me-2"></i>Thông tin khách hàng</h5>
+                        </div>
+                        <div class="card-body">
+                            <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+                            
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label class="form-label">Họ tên <span class="text-danger">*</span></label>
+                                    <input asp-for="CustomerName" class="form-control form-control-lg" placeholder="Nhập họ tên đầy đủ" value="@ViewBag.CustomerName" required>
+                                    <span asp-validation-for="CustomerName" class="text-danger small"></span>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Số điện thoại <span class="text-danger">*</span></label>
+                                    <input asp-for="CustomerPhone" class="form-control form-control-lg" placeholder="Nhập số điện thoại" value="@ViewBag.CustomerPhone" required>
+                                    <span asp-validation-for="CustomerPhone" class="text-danger small"></span>
+                                </div>
+                                <div class="col-12">
+                                    <label class="form-label">Email</label>
+                                    <input asp-for="CustomerEmail" type="email" class="form-control form-control-lg" placeholder="Nhập email (không bắt buộc)" value="@ViewBag.CustomerEmail">
+                                </div>
+                                <div class="col-12">
+                                    <label class="form-label">Địa chỉ giao hàng <span class="text-danger">*</span></label>
+                                    <textarea asp-for="CustomerAddress" class="form-control" rows="3" placeholder="Nhập địa chỉ giao hàng chi tiết (số nhà, đường, phường/xã, quận/huyện, tỉnh/thành phố)" required></textarea>
+                                    <span asp-validation-for="CustomerAddress" class="text-danger small"></span>
+                                </div>
+                                <div class="col-12">
+                                    <label class="form-label">Ghi chú đơn hàng</label>
+                                    <textarea asp-for="Notes" class="form-control" rows="2" placeholder="Ghi chú thêm cho đơn hàng (ví dụ: thời gian giao hàng mong muốn...)"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Payment Method -->
+                    <div class="checkout-card">
+                        <div class="card-header">
+                            <h5><i class="fas fa-credit-card me-2"></i>Phương thức thanh toán</h5>
+                        </div>
+                        <div class="card-body">
+                            <label class="payment-option selected" id="cod-option">
+                                <input type="radio" name="paymentMethod" value="COD" checked>
+                                <div class="payment-icon cod-icon">
+                                    <i class="fas fa-money-bill-wave"></i>
+                                </div>
+                                <div class="payment-info">
+                                    <strong>Thanh toán khi nhận hàng (COD)</strong>
+                                    <p>Thanh toán bằng tiền mặt khi nhận hàng</p>
+                                </div>
+                            </label>
+
+                            <label class="payment-option" id="vnpay-option">
+                                <input type="radio" name="paymentMethod" value="VNPay">
+                                <div class="payment-icon vnpay-icon">
+                                    <i class="fas fa-university"></i>
+                                </div>
+                                <div class="payment-info">
+                                    <strong>Thanh toán qua VNPay <img src="https://sandbox.vnpayment.vn/paymentv2/images/icons/vi.png" alt="VNPay" class="vnpay-logo"></strong>
+                                    <p>Thanh toán online qua thẻ ATM, Internet Banking, Visa, Master...</p>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Order Summary -->
+                <div class="col-lg-5">
+                    <div class="checkout-card order-summary-sticky">
+                        <div class="card-header">
+                            <h5><i class="fas fa-shopping-cart me-2"></i>Đơn hàng của bạn</h5>
+                        </div>
+                        <div class="card-body">
+                            @if (cart != null && cart.Any())
+                            {
+                                @foreach (var item in cart)
+                                {
+                                    <div class="cart-summary-item">
+                                        <div class="d-flex align-items-center">
+                                            @if (!string.IsNullOrEmpty(item.ImageUrl))
+                                            {
+                                                <img src="@item.ImageUrl" alt="@item.DishName" class="cart-item-image">
+                                            }
+                                            else
+                                            {
+                                                <div class="cart-item-image d-flex align-items-center justify-content-center bg-light">
+                                                    <i class="fas fa-utensils text-muted"></i>
+                                                </div>
+                                            }
+                                            <div class="cart-item-info">
+                                                <div class="cart-item-name">@item.DishName</div>
+                                                <div class="cart-item-qty">Số lượng: @item.Quantity</div>
+                                            </div>
+                                        </div>
+                                        <span class="cart-item-price">@item.SubTotal.ToString("N0") ₫</span>
+                                    </div>
+                                }
+                            }
+                            
+                            <div class="cart-total">
+                                <span class="cart-total-label">Tổng cộng:</span>
+                                <span class="cart-total-amount">@total.ToString("N0") ₫</span>
+                            </div>
+
+                            <button type="submit" class="btn btn-checkout w-100 mt-4">
+                                <i class="fas fa-check-circle me-2"></i>Xác nhận đặt hàng
+                            </button>
+
+                            <div class="security-note">
+                                <i class="fas fa-lock me-1"></i>Thông tin của bạn được bảo mật an toàn
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script>
+        document.querySelectorAll('.payment-option').forEach(function(option) {
+            option.addEventListener('click', function() {
+                document.querySelectorAll('.payment-option').forEach(function(opt) {
+                    opt.classList.remove('selected');
+                });
+                this.classList.add('selected');
+                this.querySelector('input[type="radio"]').checked = true;
+            });
+        });
+    </script>
+}

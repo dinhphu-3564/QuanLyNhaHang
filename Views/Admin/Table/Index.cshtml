@@ -1,0 +1,55 @@
+@model List<Web_QLNhaHang.Models.Table>
+@{
+    ViewData["Title"] = "Quản lý bàn";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>Quản lý bàn</h2>
+    <a asp-action="Create" class="btn btn-primary">
+        <i class="fas fa-plus"></i> Thêm bàn mới
+    </a>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Số bàn</th>
+                    <th>Khu vực</th>
+                    <th>Sức chứa</th>
+                    <th>Trạng thái</th>
+                    <th>Thao tác</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var table in Model)
+                {
+                    <tr>
+                        <td>@table.TableNumber</td>
+                        <td>@table.Area?.AreaName</td>
+                        <td>@table.Capacity người</td>
+                        <td>
+                            <span class="badge @(table.Status == "Trống" ? "bg-success" : table.Status == "Đã đặt" ? "bg-warning" : table.Status == "Đang phục vụ" ? "bg-info" : "bg-secondary")">
+                                @table.Status
+                            </span>
+                        </td>
+                        <td>
+                            <a asp-action="Edit" asp-route-id="@table.TableId" class="btn btn-sm btn-warning">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            <form asp-action="Delete" method="post" class="d-inline">
+                                <input type="hidden" name="id" value="@table.TableId">
+                                <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Bạn có chắc muốn xóa?')">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+

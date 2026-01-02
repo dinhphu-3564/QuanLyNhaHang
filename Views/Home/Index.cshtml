@@ -1,0 +1,294 @@
+@model dynamic
+@{
+    ViewData["Title"] = "Trang chủ";
+}
+
+<!-- Hero Banner -->
+<section class="hero-banner" style="background-image: url('/images/banners/hero-banner.png');">
+    <div class="hero-content">
+        <h1>Nhà hàng Việt</h1>
+        <p>Thưởng thức hương vị đậm chất Việt Nam với các món ăn truyền thống</p>
+        <a asp-controller="Menu" asp-action="Index" class="hero-btn">
+            <i class="fas fa-utensils me-2"></i>Xem Menu
+        </a>
+    </div>
+</section>
+
+<!-- Quick Actions -->
+<section class="quick-actions">
+    <div class="container">
+        <div class="row g-0">
+            <div class="col">
+                <a asp-controller="Menu" asp-action="Index" class="action-link">
+                    <i class="fas fa-book-open"></i>
+                    <span>Menu</span>
+                </a>
+            </div>
+            <div class="col">
+                <a asp-controller="Booking" asp-action="Index" class="action-link">
+                    <i class="fas fa-calendar-check"></i>
+                    <span>Đặt bàn</span>
+                </a>
+            </div>
+            <div class="col">
+                <a asp-controller="Order" asp-action="Checkout" class="action-link">
+                    <i class="fas fa-motorcycle"></i>
+                    <span>Đặt ship</span>
+                </a>
+            </div>
+            <div class="col">
+                <a asp-controller="Home" asp-action="Contact" class="action-link">
+                    <i class="fas fa-birthday-cake"></i>
+                    <span>Đặt tiệc</span>
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Món ngon nổi bật -->
+<section class="food-section">
+    <div class="section-container">
+        <div class="section-heading">
+            <h2>Món ngon nổi bật</h2>
+            <p class="subtitle">Những món ăn được yêu thích nhất tại Nhà hàng Việt</p>
+            <div class="divider"></div>
+        </div>
+        
+        <div class="food-grid">
+            @if (ViewBag.FeaturedDishes != null && ((List<Web_QLNhaHang.Models.Dish>)ViewBag.FeaturedDishes).Any())
+            {
+                @foreach (var dish in (List<Web_QLNhaHang.Models.Dish>)ViewBag.FeaturedDishes)
+                {
+                    <div class="food-card">
+                        <div class="img-wrapper">
+                            @if (!string.IsNullOrEmpty(dish.ImageUrl))
+                            {
+                                <img src="@dish.ImageUrl" alt="@dish.DishName">
+                            }
+                            else
+                            {
+                                <div class="placeholder-img"><i class="fas fa-utensils"></i></div>
+                            }
+                            @if (dish.IsFeatured)
+                            {
+                                <span class="badge-new"><i class="fas fa-fire me-1"></i>Hot</span>
+                            }
+                        </div>
+                        <div class="card-content">
+                            <h3 class="card-title">@dish.DishName</h3>
+                            <p class="card-desc">@dish.Description</p>
+                            <p class="price">@dish.Price.ToString("N0") ₫</p>
+                        </div>
+                        <div class="card-footer">
+                            <a asp-controller="Menu" asp-action="Details" asp-route-id="@dish.DishId" class="btn-primary-custom w-100">
+                                <i class="fas fa-eye"></i> Chi tiết
+                            </a>
+                        </div>
+                    </div>
+                }
+            }
+            else
+            {
+                <div class="food-card">
+                    <div class="img-wrapper">
+                        <img src="/images/dishes/ca-keo-muoi-ot.png" alt="Cá kèo muối ớt">
+                        <span class="badge-new"><i class="fas fa-fire me-1"></i>Hot</span>
+                    </div>
+                    <div class="card-content">
+                        <h3 class="card-title">Cá kèo muối ớt</h3>
+                        <p class="card-desc">Cá kèo tươi chiên giòn, thấm vị muối ớt cay nồng</p>
+                        <p class="price">189,000 ₫</p>
+                    </div>
+                    <div class="card-footer">
+                        <a href="#" class="btn-primary-custom w-100"><i class="fas fa-eye"></i> Chi tiết</a>
+                    </div>
+                </div>
+                
+                <div class="food-card">
+                    <div class="img-wrapper">
+                        <img src="/images/dishes/banh-trang-cuon.png" alt="Bánh tráng cuốn">
+                        <span class="badge-hot">Best Seller</span>
+                    </div>
+                    <div class="card-content">
+                        <h3 class="card-title">Bánh tráng cuốn thịt heo</h3>
+                        <p class="card-desc">Bánh tráng cuốn ba chỉ quay giòn cùng rau sống</p>
+                        <p class="price">159,000 ₫</p>
+                    </div>
+                    <div class="card-footer">
+                        <a href="#" class="btn-primary-custom w-100"><i class="fas fa-eye"></i> Chi tiết</a>
+                    </div>
+                </div>
+                
+                <div class="food-card">
+                    <div class="img-wrapper">
+                        <img src="/images/dishes/banh-xeo.png" alt="Bánh xèo">
+                        <span class="badge-new"><i class="fas fa-star me-1"></i>Mới</span>
+                    </div>
+                    <div class="card-content">
+                        <h3 class="card-title">Bánh xèo giòn</h3>
+                        <p class="card-desc">Bánh xèo vỏ giòn, nhân tôm thịt thơm ngon</p>
+                        <p class="price">129,000 ₫</p>
+                    </div>
+                    <div class="card-footer">
+                        <a href="#" class="btn-primary-custom w-100"><i class="fas fa-eye"></i> Chi tiết</a>
+                    </div>
+                </div>
+            }
+        </div>
+        
+        <div class="text-center">
+            <a asp-controller="Menu" asp-action="Index" class="btn-view-all">Xem thêm <i class="fas fa-arrow-right ms-2"></i></a>
+        </div>
+    </div>
+</section>
+
+<!-- Các món Lẩu -->
+<section class="food-section alt-bg">
+    <div class="section-container">
+        <div class="section-heading">
+            <h2>Các món Lẩu</h2>
+            <p class="subtitle">Lẩu truyền thống với nước dùng đậm đà</p>
+            <div class="divider"></div>
+        </div>
+        
+        <div class="food-grid">
+            <div class="food-card">
+                <div class="img-wrapper">
+                    <img src="/images/dishes/lau-ga-la-giang.png" alt="Lẩu gà lá giang">
+                </div>
+                <div class="card-content">
+                    <h3 class="card-title">Lẩu gà lá giang</h3>
+                    <p class="card-desc">Gà ta thả vườn nấu với lá giang chua thanh</p>
+                    <p class="price">269,000 ₫</p>
+                </div>
+                <div class="card-footer">
+                    <a href="#" class="btn-primary-custom w-100"><i class="fas fa-eye"></i> Chi tiết</a>
+                </div>
+            </div>
+            
+            <div class="food-card">
+                <div class="img-wrapper">
+                    <img src="/images/dishes/lau-ca-keo.png" alt="Lẩu cá kèo">
+                    <span class="badge-hot">Đặc biệt</span>
+                </div>
+                <div class="card-content">
+                    <h3 class="card-title">Lẩu cá kèo lá giang</h3>
+                    <p class="card-desc">Cá kèo tươi sống nấu với lá giang</p>
+                    <p class="price">289,000 ₫</p>
+                </div>
+                <div class="card-footer">
+                    <a href="#" class="btn-primary-custom w-100"><i class="fas fa-eye"></i> Chi tiết</a>
+                </div>
+            </div>
+            
+            <div class="food-card">
+                <div class="img-wrapper">
+                    <img src="/images/dishes/vit-nuong-chao.png" alt="Lẩu vịt nấu chao">
+                </div>
+                <div class="card-content">
+                    <h3 class="card-title">Lẩu vịt nấu chao</h3>
+                    <p class="card-desc">Vịt nấu chao béo ngậy, thơm mùi sả</p>
+                    <p class="price">319,000 ₫</p>
+                </div>
+                <div class="card-footer">
+                    <a href="#" class="btn-primary-custom w-100"><i class="fas fa-eye"></i> Chi tiết</a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="text-center">
+            <a asp-controller="Menu" asp-action="Index" class="btn-view-all">Xem tất cả món lẩu <i class="fas fa-arrow-right ms-2"></i></a>
+        </div>
+    </div>
+</section>
+
+<!-- Món nướng -->
+<section class="food-section">
+    <div class="section-container">
+        <div class="section-heading">
+            <h2>Món Nướng</h2>
+            <p class="subtitle">Các món nướng thơm lừng, đậm đà</p>
+            <div class="divider"></div>
+        </div>
+        
+        <div class="food-grid">
+            <div class="food-card">
+                <div class="img-wrapper">
+                    <img src="/images/dishes/vit-nuong-chao.png" alt="Vịt nướng chao">
+                    <span class="badge-new"><i class="fas fa-fire me-1"></i>Hot</span>
+                </div>
+                <div class="card-content">
+                    <h3 class="card-title">Vịt nướng chao</h3>
+                    <p class="card-desc">Vịt ướp chao, nướng than hoa vàng giòn</p>
+                    <p class="price">359,000 ₫</p>
+                </div>
+                <div class="card-footer">
+                    <a href="#" class="btn-primary-custom w-100"><i class="fas fa-eye"></i> Chi tiết</a>
+                </div>
+            </div>
+            
+            <div class="food-card">
+                <div class="img-wrapper">
+                    <img src="/images/dishes/ca-keo-muoi-ot.png" alt="Cá kèo nướng">
+                </div>
+                <div class="card-content">
+                    <h3 class="card-title">Cá kèo nướng muối ớt</h3>
+                    <p class="card-desc">Cá kèo nướng giòn, thấm đẫm muối ớt</p>
+                    <p class="price">189,000 ₫</p>
+                </div>
+                <div class="card-footer">
+                    <a href="#" class="btn-primary-custom w-100"><i class="fas fa-eye"></i> Chi tiết</a>
+                </div>
+            </div>
+            
+            <div class="food-card">
+                <div class="img-wrapper">
+                    <img src="/images/dishes/banh-xeo.png" alt="Bánh xèo">
+                </div>
+                <div class="card-content">
+                    <h3 class="card-title">Bánh xèo giòn</h3>
+                    <p class="card-desc">Bánh xèo vỏ giòn, nhân tôm thịt</p>
+                    <p class="price">129,000 ₫</p>
+                </div>
+                <div class="card-footer">
+                    <a href="#" class="btn-primary-custom w-100"><i class="fas fa-eye"></i> Chi tiết</a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="text-center">
+            <a asp-controller="Menu" asp-action="Index" class="btn-view-all">Xem tất cả món nướng <i class="fas fa-arrow-right ms-2"></i></a>
+        </div>
+    </div>
+</section>
+
+<!-- About Banner -->
+<section class="about-banner">
+    <div class="container">
+        <h2><i class="fas fa-leaf me-2"></i>Nhà hàng Việt</h2>
+        <p>Đến với Nhà hàng Việt, quý khách sẽ được thưởng thức những món ăn đậm chất Việt Nam, mang đến hương vị truyền thống đích thực.</p>
+        
+        <div class="hotline-big">
+            <i class="fas fa-phone-volume me-3"></i>1800 - 2028
+        </div>
+        
+        <p><i class="fas fa-clock me-2"></i>Phục vụ từ 10:30 - 22:00 hàng ngày</p>
+        
+        <a asp-controller="Booking" asp-action="Index" class="btn-booking mt-4">
+            <i class="fas fa-calendar-check me-2"></i>Đặt bàn ngay
+        </a>
+    </div>
+</section>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const cards = document.querySelectorAll('.food-card');
+            cards.forEach((card, index) => {
+                card.style.animationDelay = (index * 0.1) + 's';
+                card.classList.add('animate-fadeInUp');
+            });
+        });
+    </script>
+}

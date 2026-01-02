@@ -1,0 +1,488 @@
+@model Web_QLNhaHang.Models.Booking
+@{
+    ViewData["Title"] = "Đặt bàn";
+}
+
+<style>
+    .booking-page {
+        min-height: 100vh;
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    }
+    .booking-banner {
+        background: linear-gradient(135deg, rgba(77, 33, 37, 0.95), rgba(139, 69, 73, 0.9)), 
+                    url('/images/banners/hero-banner.png');
+        background-size: cover;
+        background-position: center;
+        padding: 4rem 0;
+        color: white;
+        text-align: center;
+    }
+    .booking-banner h1 {
+        font-size: 2.8rem;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+        text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+    }
+    .booking-banner p {
+        font-size: 1.1rem;
+        opacity: 0.95;
+    }
+    .booking-container {
+        max-width: 1200px;
+        margin: -3rem auto 3rem;
+        padding: 0 1rem;
+        position: relative;
+        z-index: 10;
+    }
+    .booking-main-card {
+        background: white;
+        border-radius: 20px;
+        box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+        overflow: hidden;
+    }
+    .booking-left {
+        background: linear-gradient(180deg, #4d2125 0%, #6b2d32 100%);
+        color: white;
+        padding: 2.5rem;
+    }
+    .booking-left h3 {
+        font-size: 1.5rem;
+        font-weight: 700;
+        margin-bottom: 1.5rem;
+        border-bottom: 2px solid rgba(255,255,255,0.3);
+        padding-bottom: 1rem;
+    }
+    .contact-item {
+        display: flex;
+        align-items: flex-start;
+        margin-bottom: 1.25rem;
+        padding: 1rem;
+        background: rgba(255,255,255,0.1);
+        border-radius: 12px;
+        transition: all 0.3s ease;
+    }
+    .contact-item:hover {
+        background: rgba(255,255,255,0.15);
+        transform: translateX(5px);
+    }
+    .contact-item i {
+        font-size: 1.3rem;
+        margin-right: 1rem;
+        color: #ffc107;
+        width: 25px;
+        text-align: center;
+    }
+    .contact-item h5 {
+        font-size: 0.85rem;
+        opacity: 0.8;
+        margin-bottom: 0.25rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    .contact-item p {
+        margin: 0;
+        font-size: 1rem;
+    }
+    .hotline-box {
+        background: linear-gradient(135deg, #ffc107 0%, #ffb300 100%);
+        color: #4d2125;
+        padding: 1.5rem;
+        border-radius: 15px;
+        text-align: center;
+        margin-top: 1.5rem;
+    }
+    .hotline-box i {
+        font-size: 2rem;
+        margin-bottom: 0.5rem;
+        animation: shake 0.5s ease-in-out infinite;
+    }
+    @@keyframes shake {
+        0%, 100% { transform: rotate(-5deg); }
+        50% { transform: rotate(5deg); }
+    }
+    .hotline-box h4 {
+        font-size: 1.8rem;
+        font-weight: 700;
+        margin: 0.5rem 0 0.25rem;
+    }
+    .hotline-box small {
+        opacity: 0.8;
+    }
+    .booking-right {
+        padding: 2.5rem;
+    }
+    .form-title {
+        color: #4d2125;
+        font-weight: 700;
+        font-size: 1.6rem;
+        margin-bottom: 0.5rem;
+    }
+    .form-subtitle {
+        color: #6c757d;
+        margin-bottom: 2rem;
+    }
+    .form-section {
+        margin-bottom: 1.5rem;
+    }
+    .form-section-title {
+        color: #4d2125;
+        font-weight: 600;
+        font-size: 1rem;
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+    }
+    .form-section-title i {
+        margin-right: 0.5rem;
+        color: #6b2d32;
+    }
+    .form-control-custom {
+        border: 2px solid #e9ecef;
+        border-radius: 12px;
+        padding: 0.875rem 1.25rem;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+    }
+    .form-control-custom:focus {
+        border-color: #4d2125;
+        box-shadow: 0 0 0 0.2rem rgba(77, 33, 37, 0.15);
+    }
+    .form-control-custom::placeholder {
+        color: #adb5bd;
+    }
+    .guest-buttons {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+    }
+    .guest-btn {
+        width: 45px;
+        height: 45px;
+        border: 2px solid #e9ecef;
+        border-radius: 50%;
+        background: white;
+        cursor: pointer;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .guest-btn:hover, .guest-btn.active {
+        background: #4d2125;
+        border-color: #4d2125;
+        color: white;
+    }
+    .btn-submit {
+        background: linear-gradient(135deg, #4d2125 0%, #6b2d32 100%);
+        border: none;
+        padding: 1rem 3rem;
+        font-size: 1.1rem;
+        font-weight: 600;
+        border-radius: 50px;
+        color: white;
+        width: 100%;
+        transition: all 0.3s ease;
+        box-shadow: 0 5px 20px rgba(77, 33, 37, 0.4);
+    }
+    .btn-submit:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 30px rgba(77, 33, 37, 0.5);
+        color: white;
+    }
+    .restaurant-gallery {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 0.5rem;
+        margin-top: 1.5rem;
+    }
+    .restaurant-gallery img {
+        width: 100%;
+        height: 70px;
+        object-fit: cover;
+        border-radius: 8px;
+        opacity: 0.9;
+        transition: all 0.3s ease;
+    }
+    .restaurant-gallery img:hover {
+        opacity: 1;
+        transform: scale(1.05);
+    }
+    .features-section {
+        background: white;
+        border-radius: 20px;
+        padding: 2rem;
+        margin-top: 2rem;
+        box-shadow: 0 10px 40px rgba(0,0,0,0.08);
+    }
+    .feature-card {
+        text-align: center;
+        padding: 1.5rem;
+    }
+    .feature-icon {
+        width: 70px;
+        height: 70px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #4d2125 0%, #6b2d32 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 1rem;
+        color: white;
+        font-size: 1.5rem;
+    }
+    .feature-card h5 {
+        color: #4d2125;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+    }
+    .feature-card p {
+        color: #6c757d;
+        font-size: 0.9rem;
+        margin: 0;
+    }
+    @@media (max-width: 991px) {
+        .booking-left {
+            padding: 2rem;
+        }
+        .booking-right {
+            padding: 2rem;
+        }
+    }
+</style>
+
+<div class="booking-page">
+    <!-- Banner -->
+    <div class="booking-banner">
+        <div class="container">
+            <h1><i class="fas fa-calendar-check me-3"></i>Đặt bàn trực tuyến</h1>
+            <p>Đặt bàn ngay để trải nghiệm ẩm thực tuyệt vời tại Nhà hàng Việt</p>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="booking-container">
+        <div class="booking-main-card">
+            <div class="row g-0">
+                <!-- Left Side - Contact Info -->
+                <div class="col-lg-4 booking-left">
+                    <h3><i class="fas fa-info-circle me-2"></i>Thông tin liên hệ</h3>
+                    
+                    <div class="contact-item">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <div>
+                            <h5>Địa chỉ</h5>
+                            <p>123 Đường ABC, Quận 1<br>TP. Hồ Chí Minh</p>
+                        </div>
+                    </div>
+                    
+                    <div class="contact-item">
+                        <i class="fas fa-clock"></i>
+                        <div>
+                            <h5>Giờ mở cửa</h5>
+                            <p>10:30 - 22:00<br>Tất cả các ngày</p>
+                        </div>
+                    </div>
+                    
+                    <div class="contact-item">
+                        <i class="fas fa-envelope"></i>
+                        <div>
+                            <h5>Email</h5>
+                            <p>nhahangviet@gmail.com</p>
+                        </div>
+                    </div>
+                    
+                    <div class="hotline-box">
+                        <i class="fas fa-phone-volume"></i>
+                        <p class="mb-0">Hotline đặt bàn</p>
+                        <h4>1800 2028</h4>
+                        <small>(Miễn phí cước gọi)</small>
+                    </div>
+                    
+                    <div class="restaurant-gallery">
+                        <img src="/images/dishes/ca-keo-muoi-ot.png" alt="Món ăn 1">
+                        <img src="/images/dishes/banh-trang-cuon.png" alt="Món ăn 2">
+                        <img src="/images/dishes/lau-ca-keo.png" alt="Món ăn 3">
+                        <img src="/images/dishes/vit-nuong-chao.png" alt="Món ăn 4">
+                        <img src="/images/dishes/lau-ga-la-giang.png" alt="Món ăn 5">
+                        <img src="/images/dishes/banh-xeo.png" alt="Món ăn 6">
+                    </div>
+                </div>
+
+                <!-- Right Side - Booking Form -->
+                <div class="col-lg-8 booking-right">
+                    <h2 class="form-title"><i class="fas fa-edit me-2"></i>Điền thông tin đặt bàn</h2>
+                    <p class="form-subtitle">Vui lòng điền đầy đủ thông tin bên dưới để đặt bàn</p>
+
+                    @if (TempData["SuccessMessage"] != null)
+                    {
+                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                            <i class="fas fa-check-circle me-2"></i> @TempData["SuccessMessage"]
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    }
+                    
+                    @if (TempData["ErrorMessage"] != null)
+                    {
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            <i class="fas fa-exclamation-circle me-2"></i> @TempData["ErrorMessage"]
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    }
+
+                    <form asp-action="Create" method="post">
+                        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+                        
+                        <!-- Contact Info -->
+                        <div class="form-section">
+                            <div class="form-section-title">
+                                <i class="fas fa-user"></i>Thông tin liên hệ
+                            </div>
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <input asp-for="CustomerName" class="form-control form-control-custom" 
+                                           placeholder="Họ và tên *" required />
+                                    <span asp-validation-for="CustomerName" class="text-danger small"></span>
+                                </div>
+                                <div class="col-md-6">
+                                    <input asp-for="CustomerPhone" class="form-control form-control-custom" 
+                                           placeholder="Số điện thoại *" required />
+                                    <span asp-validation-for="CustomerPhone" class="text-danger small"></span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Guest Count -->
+                        <div class="form-section">
+                            <div class="form-section-title">
+                                <i class="fas fa-users"></i>Số lượng khách
+                            </div>
+                            <div class="guest-buttons" id="guestButtons">
+                                @for (int i = 1; i <= 10; i++)
+                                {
+                                    <button type="button" class="guest-btn @(i == 2 ? "active" : "")" 
+                                            data-value="@i" onclick="selectGuests(this, @i)">@i</button>
+                                }
+                                <button type="button" class="guest-btn" style="width: auto; padding: 0 15px;"
+                                        data-value="11" onclick="selectGuests(this, 11)">10+</button>
+                            </div>
+                            <input type="hidden" asp-for="NumberOfGuests" id="numberOfGuests" value="2" />
+                        </div>
+                        
+                        <!-- Date Time -->
+                        <div class="form-section">
+                            <div class="form-section-title">
+                                <i class="fas fa-calendar-alt"></i>Thời gian đến
+                            </div>
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <input type="date" asp-for="BookingDate" class="form-control form-control-custom" 
+                                           id="bookingDateInput"
+                                           value="@DateTime.Now.AddDays(1).ToString("yyyy-MM-dd")" 
+                                           min="@DateTime.Now.ToString("yyyy-MM-dd")" required />
+                                </div>
+                                <div class="col-md-6">
+                                    <select class="form-select form-control-custom" id="bookingTime">
+                                        <option value="">-- Chọn giờ --</option>
+                                        <option value="10:30">10:30</option>
+                                        <option value="11:00">11:00</option>
+                                        <option value="11:30">11:30</option>
+                                        <option value="12:00" selected>12:00</option>
+                                        <option value="12:30">12:30</option>
+                                        <option value="13:00">13:00</option>
+                                        <option value="17:00">17:00</option>
+                                        <option value="17:30">17:30</option>
+                                        <option value="18:00">18:00</option>
+                                        <option value="18:30">18:30</option>
+                                        <option value="19:00">19:00</option>
+                                        <option value="19:30">19:30</option>
+                                        <option value="20:00">20:00</option>
+                                        <option value="20:30">20:30</option>
+                                        <option value="21:00">21:00</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Table Selection -->
+                        <div class="form-section">
+                            <div class="form-section-title">
+                                <i class="fas fa-chair"></i>Khu vực / Bàn (Tùy chọn)
+                            </div>
+                            <select asp-for="TableId" class="form-select form-control-custom" asp-items="ViewBag.TableId">
+                                <option value="">-- Để nhà hàng sắp xếp --</option>
+                            </select>
+                            <small class="text-muted mt-1 d-block">Nếu không chọn, nhà hàng sẽ sắp xếp bàn phù hợp cho bạn</small>
+                        </div>
+                        
+                        <!-- Notes -->
+                        <div class="form-section">
+                            <div class="form-section-title">
+                                <i class="fas fa-comment-dots"></i>Ghi chú
+                            </div>
+                            <textarea asp-for="Notes" class="form-control form-control-custom" rows="3" 
+                                      placeholder="Ví dụ: Ghế trẻ em, trang trí sinh nhật, dị ứng thực phẩm..."></textarea>
+                        </div>
+                        
+                        <!-- Submit -->
+                        <button type="submit" class="btn btn-submit mt-3">
+                            <i class="fas fa-paper-plane me-2"></i>Xác nhận đặt bàn
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Features Section -->
+        <div class="features-section">
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-utensils"></i>
+                        </div>
+                        <h5>Ẩm thực đặc sắc</h5>
+                        <p>Món ăn truyền thống được chế biến bởi đầu bếp giàu kinh nghiệm</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-couch"></i>
+                        </div>
+                        <h5>Không gian sang trọng</h5>
+                        <p>Thiết kế ấm cúng, phù hợp cho gia đình và tiệc công ty</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-heart"></i>
+                        </div>
+                        <h5>Phục vụ tận tâm</h5>
+                        <p>Đội ngũ nhân viên chuyên nghiệp, luôn sẵn sàng phục vụ</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function selectGuests(btn, value) {
+            document.querySelectorAll('.guest-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            document.getElementById('numberOfGuests').value = value;
+        }
+
+        // Combine date and time for BookingDate
+        document.querySelector('form').addEventListener('submit', function(e) {
+            var dateInput = document.getElementById('bookingDateInput');
+            var timeSelect = document.getElementById('bookingTime');
+            if (dateInput.value && timeSelect.value) {
+                dateInput.value = dateInput.value + 'T' + timeSelect.value;
+            }
+        });
+    </script>
+}

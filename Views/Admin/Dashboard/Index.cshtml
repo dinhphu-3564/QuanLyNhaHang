@@ -1,0 +1,138 @@
+@{
+    ViewData["Title"] = "Dashboard";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    var stats = ViewBag.Stats;
+}
+
+<!-- Page Header -->
+<div class="page-header">
+    <h2><i class="fas fa-tachometer-alt"></i> Dashboard</h2>
+</div>
+
+<!-- Stat Cards -->
+<div class="row g-4 mb-4">
+    <div class="col-md-3">
+        <div class="stat-card">
+            <div class="stat-icon green">
+                <i class="fas fa-shopping-cart"></i>
+            </div>
+            <div class="stat-details">
+                <h6>Tổng đơn hàng</h6>
+                <h3>@(stats?.TotalOrders ?? 0)</h3>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="stat-card">
+            <div class="stat-icon blue">
+                <i class="fas fa-calendar-day"></i>
+            </div>
+            <div class="stat-details">
+                <h6>Đơn hôm nay</h6>
+                <h3>@(stats?.TodayOrders ?? 0)</h3>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="stat-card">
+            <div class="stat-icon orange">
+                <i class="fas fa-money-bill-wave"></i>
+            </div>
+            <div class="stat-details">
+                <h6>Doanh thu tháng</h6>
+                <h3>@(stats?.MonthlyRevenue != null ? ((decimal)stats.MonthlyRevenue).ToString("N0") : "0") ₫</h3>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="stat-card">
+            <div class="stat-icon red">
+                <i class="fas fa-clock"></i>
+            </div>
+            <div class="stat-details">
+                <h6>Đặt bàn chờ</h6>
+                <h3>@(stats?.PendingBookings ?? 0)</h3>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Recent Data -->
+<div class="row g-4">
+    <div class="col-md-6">
+        <div class="data-table">
+            <div class="p-3 border-bottom" style="background: linear-gradient(135deg, #4a7c59 0%, #3d6349 100%);">
+                <h5 class="mb-0 text-white"><i class="fas fa-shopping-bag me-2"></i>Đơn hàng gần đây</h5>
+            </div>
+            <div class="p-3">
+                <table class="table table-sm mb-3">
+                    <thead>
+                        <tr>
+                            <th>Mã đơn</th>
+                            <th>Khách hàng</th>
+                            <th>Tổng tiền</th>
+                            <th>Trạng thái</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (ViewBag.RecentOrders != null)
+                        {
+                            @foreach (var order in (List<Web_QLNhaHang.Models.Order>)ViewBag.RecentOrders)
+                            {
+                                <tr>
+                                    <td><strong>@order.OrderNumber</strong></td>
+                                    <td>@order.CustomerName</td>
+                                    <td class="text-success fw-bold">@order.TotalAmount.ToString("N0") ₫</td>
+                                    <td>
+                                        <span class="badge bg-warning">@order.Status</span>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+                <a asp-controller="Order" asp-action="Index" class="btn btn-sm btn-primary-custom">
+                    <i class="fas fa-list me-1"></i> Xem tất cả
+                </a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="data-table">
+            <div class="p-3 border-bottom" style="background: linear-gradient(135deg, #4a7c59 0%, #3d6349 100%);">
+                <h5 class="mb-0 text-white"><i class="fas fa-calendar-check me-2"></i>Đặt bàn gần đây</h5>
+            </div>
+            <div class="p-3">
+                <table class="table table-sm mb-3">
+                    <thead>
+                        <tr>
+                            <th>Khách hàng</th>
+                            <th>Ngày giờ</th>
+                            <th>Số khách</th>
+                            <th>Trạng thái</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (ViewBag.RecentBookings != null)
+                        {
+                            @foreach (var booking in (List<Web_QLNhaHang.Models.Booking>)ViewBag.RecentBookings)
+                            {
+                                <tr>
+                                    <td><strong>@booking.CustomerName</strong></td>
+                                    <td>@booking.BookingDate.ToString("dd/MM/yyyy HH:mm")</td>
+                                    <td>@booking.NumberOfGuests người</td>
+                                    <td>
+                                        <span class="badge bg-warning">@booking.Status</span>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+                <a asp-controller="Booking" asp-action="Index" class="btn btn-sm btn-primary-custom">
+                    <i class="fas fa-list me-1"></i> Xem tất cả
+                </a>
+            </div>
+        </div>
+    </div>
+</div>

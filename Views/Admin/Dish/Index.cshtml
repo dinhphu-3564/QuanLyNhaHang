@@ -1,0 +1,260 @@
+@model List<Web_QLNhaHang.Models.Dish>
+@{
+    ViewData["Title"] = "Quản lý món ăn";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<style>
+    .page-header {
+        background: white;
+        padding: 1.5rem;
+        border-radius: 12px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        margin-bottom: 1.5rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .page-header h2 {
+        margin: 0;
+        color: #2c3e50;
+        font-weight: 700;
+    }
+
+    .btn-add {
+        background: linear-gradient(135deg, #4a7c59 0%, #3d6349 100%);
+        color: white;
+        border: none;
+        padding: 0.7rem 1.5rem;
+        border-radius: 8px;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        transition: all 0.3s;
+    }
+
+    .btn-add:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(74, 124, 89, 0.3);
+        color: white;
+    }
+
+    .filter-card {
+        background: white;
+        padding: 1.5rem;
+        border-radius: 12px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        margin-bottom: 1.5rem;
+    }
+
+    .data-table {
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        overflow: hidden;
+    }
+
+    .table {
+        margin: 0;
+    }
+
+    .table thead th {
+        background: linear-gradient(135deg, #4a7c59 0%, #3d6349 100%);
+        color: white;
+        font-weight: 600;
+        padding: 1rem;
+        border: none;
+    }
+
+    .table tbody tr {
+        transition: all 0.2s;
+    }
+
+    .table tbody tr:hover {
+        background: #f8f9fa;
+        transform: scale(1.01);
+    }
+
+    .table tbody td {
+        padding: 1rem;
+        vertical-align: middle;
+        border-bottom: 1px solid #ecf0f1;
+    }
+
+    .dish-img {
+        width: 70px;
+        height: 70px;
+        object-fit: cover;
+        border-radius: 8px;
+        box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+    }
+
+    .dish-name {
+        font-weight: 600;
+        color: #2c3e50;
+    }
+
+    .dish-price {
+        color: #4a7c59;
+        font-weight: 700;
+    }
+
+    .badge {
+        padding: 0.5rem 0.8rem;
+        border-radius: 6px;
+        font-weight: 600;
+    }
+
+    .btn-action {
+        padding: 0.5rem 0.8rem;
+        border-radius: 6px;
+        border: none;
+        margin-right: 0.3rem;
+        transition: all 0.2s;
+    }
+
+    .btn-action:hover {
+        transform: translateY(-2px);
+    }
+
+    .btn-edit {
+        background: #f39c12;
+        color: white;
+    }
+
+    .btn-edit:hover {
+        background: #e67e22;
+        box-shadow: 0 3px 10px rgba(243, 156, 18, 0.3);
+    }
+
+    .btn-delete {
+        background: #e74c3c;
+        color: white;
+    }
+
+    .btn-delete:hover {
+        background: #c0392b;
+        box-shadow: 0 3px 10px rgba(231, 76, 60, 0.3);
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 3rem;
+        color: #95a5a6;
+    }
+
+    .empty-state i {
+        font-size: 4rem;
+        margin-bottom: 1rem;
+    }
+</style>
+
+<!-- Page Header -->
+<div class="page-header">
+    <h2><i class="fas fa-utensils me-2"></i>Quản lý món ăn</h2>
+    <a asp-action="Create" class="btn-add">
+        <i class="fas fa-plus-circle"></i> Thêm món mới
+    </a>
+</div>
+
+<!-- Filter Card -->
+<div class="filter-card">
+    <form asp-action="Index" method="get" class="row g-3">
+        <div class="col-md-4">
+            <label class="form-label"><i class="fas fa-list-alt me-1"></i> Danh mục</label>
+            <select name="categoryId" class="form-select" asp-items="ViewBag.Categories">
+                <option value="">Tất cả danh mục</option>
+            </select>
+        </div>
+        <div class="col-md-5">
+            <label class="form-label"><i class="fas fa-search me-1"></i> Tìm kiếm</label>
+            <input type="text" name="searchTerm" class="form-control" placeholder="Nhập tên món..." value="@ViewBag.SearchTerm">
+        </div>
+        <div class="col-md-3 d-flex align-items-end">
+            <button type="submit" class="btn btn-secondary w-100">
+                <i class="fas fa-filter me-1"></i> Lọc
+            </button>
+        </div>
+    </form>
+</div>
+
+<!-- Data Table -->
+<div class="data-table">
+    @if (Model != null && Model.Any())
+    {
+        <table class="table">
+            <thead>
+                <tr>
+                    <th style="width: 100px;">Hình ảnh</th>
+                    <th>Tên món</th>
+                    <th>Danh mục</th>
+                    <th style="width: 150px;">Giá</th>
+                    <th style="width: 120px;">Trạng thái</th>
+                    <th style="width: 150px;">Thao tác</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var dish in Model)
+                {
+                    <tr>
+                        <td>
+                            @if (!string.IsNullOrEmpty(dish.ImageUrl))
+                            {
+                                <img src="@dish.ImageUrl" alt="@dish.DishName" class="dish-img">
+                            }
+                            else
+                            {
+                                <div class="dish-img d-flex align-items-center justify-content-center" style="background: #ecf0f1;">
+                                    <i class="fas fa-utensils text-muted"></i>
+                                </div>
+                            }
+                        </td>
+                        <td>
+                            <div class="dish-name">@dish.DishName</div>
+                            @if (dish.IsFeatured)
+                            {
+                                <small class="text-muted"><i class="fas fa-star text-warning"></i> Món nổi bật</small>
+                            }
+                        </td>
+                        <td>@dish.Category?.CategoryName</td>
+                        <td class="dish-price">@dish.Price.ToString("N0") ₫</td>
+                        <td>
+                            @if (dish.IsAvailable)
+                            {
+                                <span class="badge bg-success">
+                                    <i class="fas fa-check-circle"></i> Còn món
+                                </span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-danger">
+                                    <i class="fas fa-times-circle"></i> Hết món
+                                </span>
+                            }
+                        </td>
+                        <td>
+                            <a asp-action="Edit" asp-route-id="@dish.DishId" class="btn btn-action btn-edit" title="Sửa">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            <a asp-action="Delete" asp-route-id="@dish.DishId" class="btn btn-action btn-delete" title="Xóa">
+                                <i class="fas fa-trash-alt"></i>
+                            </a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <div class="empty-state">
+            <i class="fas fa-inbox"></i>
+            <p>Không có món ăn nào</p>
+            <a asp-action="Create" class="btn-add">
+                <i class="fas fa-plus-circle"></i> Thêm món mới
+            </a>
+        </div>
+    }
+</div>

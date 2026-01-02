@@ -1,0 +1,704 @@
+@model List<Web_QLNhaHang.Models.Dish>
+@{
+    ViewData["Title"] = "Thực đơn";
+}
+
+<!-- Page Banner -->
+<div class="page-banner">
+    <div class="container">
+        <h1>Thực đơn</h1>
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Trang chủ</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Thực đơn</li>
+            </ol>
+        </nav>
+    </div>
+</div>
+
+<!-- Quick Actions -->
+<div class="quick-actions-section">
+    <div class="container">
+        <div class="quick-actions">
+            <a href="/Booking" class="action-btn">
+                <div class="action-icon">
+                    <i class="fas fa-utensils"></i>
+                </div>
+                <span>Đặt bàn</span>
+            </a>
+            <a asp-controller="Menu" asp-action="Index" class="action-btn">
+                <div class="action-icon">
+                    <i class="fas fa-shipping-fast"></i>
+                </div>
+                <span>Đặt ship</span>
+            </a>
+            <a href="/Booking" class="action-btn">
+                <div class="action-icon">
+                    <i class="fas fa-glass-cheers"></i>
+                </div>
+                <span>Đặt tiệc tại gia</span>
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Menu Title -->
+<div class="menu-title-section">
+    <div class="container">
+        <h2>MÓN ĐẶC TRƯNG</h2>
+    </div>
+</div>
+
+<!-- Filter Section -->
+<div class="filter-section">
+    <div class="container">
+        <div class="filter-wrapper">
+            <!-- Category Pills -->
+            <div class="category-pills">
+                <a asp-action="Index" class="pill @(ViewBag.SelectedCategoryId == null ? "active" : "")">
+                    TẤT CẢ MÓN
+                </a>
+                @if (ViewBag.Categories != null)
+                {
+                    @foreach (var category in (List<Web_QLNhaHang.Models.Category>)ViewBag.Categories)
+                    {
+                        <a asp-action="Index" 
+                           asp-route-categoryId="@category.CategoryId"
+                           asp-route-searchTerm="@ViewBag.SearchTerm"
+                           asp-route-sort="@ViewBag.CurrentSort"
+                           class="pill @(ViewBag.SelectedCategoryId == category.CategoryId ? "active" : "")">
+                            @category.CategoryName.ToUpper()
+                        </a>
+                    }
+                }
+            </div>
+            
+            <!-- Sort & Search -->
+            <div class="filter-controls">
+                <form asp-action="Index" method="get" class="search-form">
+                    @if (ViewBag.SelectedCategoryId != null)
+                    {
+                        <input type="hidden" name="categoryId" value="@ViewBag.SelectedCategoryId" />
+                    }
+                    @if (!string.IsNullOrEmpty(ViewBag.CurrentSort as string))
+                    {
+                        <input type="hidden" name="sort" value="@ViewBag.CurrentSort" />
+                    }
+                    <input type="text" name="searchTerm" class="search-input" 
+                           placeholder="Tìm món ăn..." value="@ViewBag.SearchTerm">
+                    <button type="submit" class="search-btn">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </form>
+                
+                <form asp-action="Index" method="get" id="sortForm" class="sort-form">
+                    @if (ViewBag.SelectedCategoryId != null)
+                    {
+                        <input type="hidden" name="categoryId" value="@ViewBag.SelectedCategoryId" />
+                    }
+                    @if (!string.IsNullOrEmpty(ViewBag.SearchTerm as string))
+                    {
+                        <input type="hidden" name="searchTerm" value="@ViewBag.SearchTerm" />
+                    }
+                    <select name="sort" class="sort-select" onchange="document.getElementById('sortForm').submit();">
+                        <option value="">Sắp xếp</option>
+                        <option value="price_asc" selected="@(ViewBag.CurrentSort == "price_asc")">Giá tăng dần</option>
+                        <option value="price_desc" selected="@(ViewBag.CurrentSort == "price_desc")">Giá giảm dần</option>
+                    </select>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Dishes List -->
+<div class="dishes-section">
+    <div class="container">
+        @if (Model != null && Model.Any())
+        {
+            <div class="menu-grid">
+                @foreach (var dish in Model)
+                {
+                    <div class="dish-card">
+                        <a asp-action="Details" asp-route-id="@dish.DishId" class="dish-image-link">
+                            @if (!string.IsNullOrEmpty(dish.ImageUrl))
+                            {
+                                <img src="@dish.ImageUrl" alt="@dish.DishName" class="dish-img">
+                            }
+                            else
+                            {
+                                <div class="placeholder-img">
+                                    <i class="fas fa-utensils"></i>
+                                </div>
+                            }
+                            @if (dish.IsFeatured)
+                            {
+                                <span class="badge-special">CÓ THỜI GIÁ HÔM NAY</span>
+                            }
+                        </a>
+                        <div class="dish-info">
+                            <p class="dish-category">@(dish.Category?.CategoryName ?? "Món đặc trưng")</p>
+                            <h3 class="dish-name">
+                                <a asp-action="Details" asp-route-id="@dish.DishId">@dish.DishName</a>
+                            </h3>
+                            <div class="dish-price">@dish.Price.ToString("N0")₫</div>
+                            <button class="btn-order" type="button" data-dish-id="@dish.DishId">
+                                <i class="fas fa-shopping-cart me-1"></i> Order
+                            </button>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+        else
+        {
+            <div class="empty-state">
+                <i class="fas fa-search fa-3x"></i>
+                <h3>Không tìm thấy món ăn</h3>
+                <p>Không có món ăn nào phù hợp với tiêu chí tìm kiếm của bạn.</p>
+                <a asp-action="Index" class="btn btn-primary">Xem tất cả món</a>
+            </div>
+        }
+
+        <!-- Pagination -->
+        @if (ViewBag.TotalPages > 1)
+        {
+            <div class="pagination-section">
+                <nav aria-label="Page navigation">
+                    <ul class="pagination">
+                        @{
+                            var currentPage = (int)ViewBag.CurrentPage;
+                            var totalPages = (int)ViewBag.TotalPages;
+                        }
+                        
+                        <li class="page-item @(currentPage == 1 ? "disabled" : "")">
+                            <a class="page-link" asp-action="Index" 
+                               asp-route-page="@(currentPage - 1)" 
+                               asp-route-categoryId="@ViewBag.SelectedCategoryId"
+                               asp-route-searchTerm="@ViewBag.SearchTerm"
+                               asp-route-sort="@ViewBag.CurrentSort">
+                                <i class="fas fa-chevron-left"></i>
+                            </a>
+                        </li>
+
+                        @for (int i = 1; i <= totalPages; i++)
+                        {
+                            <li class="page-item @(currentPage == i ? "active" : "")">
+                                <a class="page-link" asp-action="Index" 
+                                   asp-route-page="@i"
+                                   asp-route-categoryId="@ViewBag.SelectedCategoryId"
+                                   asp-route-searchTerm="@ViewBag.SearchTerm"
+                                   asp-route-sort="@ViewBag.CurrentSort">@i</a>
+                            </li>
+                        }
+
+                        <li class="page-item @(currentPage == totalPages ? "disabled" : "")">
+                            <a class="page-link" asp-action="Index" 
+                               asp-route-page="@(currentPage + 1)"
+                               asp-route-categoryId="@ViewBag.SelectedCategoryId"
+                               asp-route-searchTerm="@ViewBag.SearchTerm"
+                               asp-route-sort="@ViewBag.CurrentSort">
+                                <i class="fas fa-chevron-right"></i>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        }
+    </div>
+</div>
+
+<style>
+    /* Global Styles */
+    body {
+        background-color: #f5f3ed;
+    }
+
+    /* Quick Actions */
+    .quick-actions-section {
+        background: #fff;
+        padding: 2rem 0;
+        margin-bottom: 2rem;
+    }
+
+    .quick-actions {
+        display: flex;
+        justify-content: center;
+        gap: 3rem;
+    }
+
+    .action-btn {
+        text-decoration: none;
+        text-align: center;
+        color: #3e2723;
+        transition: transform 0.3s ease;
+    }
+
+    .action-btn:hover {
+        transform: translateY(-5px);
+        color: #3e2723;
+    }
+
+    .action-icon {
+        width: 80px;
+        height: 80px;
+        background: linear-gradient(135deg, #4a7c59 0%, #3d6349 100%);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 0.75rem;
+        box-shadow: 0 4px 15px rgba(74, 124, 89, 0.3);
+    }
+
+    .action-icon i {
+        font-size: 2rem;
+        color: white;
+    }
+
+    .action-btn span {
+        font-weight: 600;
+        font-size: 0.95rem;
+    }
+
+    /* Menu Title */
+    .menu-title-section {
+        text-align: center;
+        padding: 2rem 0 1.5rem;
+    }
+
+    .menu-title-section h2 {
+        font-size: 2rem;
+        font-weight: 700;
+        color: #3e2723;
+        letter-spacing: 1px;
+    }
+
+    /* Filter Section */
+    .filter-section {
+        background: #fff;
+        padding: 1.5rem 0;
+        margin-bottom: 2rem;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    }
+
+    .filter-wrapper {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 2rem;
+    }
+
+    .category-pills {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.75rem;
+        flex: 1;
+    }
+
+    .pill {
+        padding: 0.6rem 1.5rem;
+        background: #f5f3ed;
+        border: 2px solid #e0ddd5;
+        border-radius: 25px;
+        text-decoration: none;
+        color: #3e2723;
+        font-weight: 600;
+        font-size: 0.85rem;
+        transition: all 0.3s ease;
+        white-space: nowrap;
+    }
+
+    .pill:hover {
+        background: #4a7c59;
+        color: white;
+        border-color: #4a7c59;
+    }
+
+    .pill.active {
+        background: #4a7c59;
+        color: white;
+        border-color: #4a7c59;
+    }
+
+    .filter-controls {
+        display: flex;
+        gap: 1rem;
+        align-items: center;
+    }
+
+    .search-form {
+        display: flex;
+        border: 2px solid #e0ddd5;
+        border-radius: 25px;
+        overflow: hidden;
+    }
+
+    .search-input {
+        border: none;
+        padding: 0.6rem 1rem;
+        outline: none;
+        width: 200px;
+    }
+
+    .search-btn {
+        background: #4a7c59;
+        border: none;
+        color: white;
+        padding: 0.6rem 1.25rem;
+        cursor: pointer;
+        transition: background 0.3s ease;
+    }
+
+    .search-btn:hover {
+        background: #3d6349;
+    }
+
+    .sort-select {
+        border: 2px solid #e0ddd5;
+        border-radius: 25px;
+        padding: 0.6rem 1.5rem 0.6rem 1rem;
+        background: white;
+        color: #3e2723;
+        font-weight: 600;
+        cursor: pointer;
+        outline: none;
+    }
+
+    /* Dishes List */
+    .dishes-section {
+        padding: 2rem 0 4rem;
+    }
+
+    .menu-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 2rem;
+    }
+
+    .dish-card {
+        background: white;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+        transition: all 0.3s ease;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .dish-card:hover {
+        box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        transform: translateY(-5px);
+    }
+
+    .dish-image-link {
+        position: relative;
+        display: block;
+        width: 100%;
+        height: 220px;
+        overflow: hidden;
+    }
+
+    .dish-img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.3s ease;
+    }
+
+    .dish-card:hover .dish-img {
+        transform: scale(1.1);
+    }
+
+    .placeholder-img {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(135deg, #f5f3ed 0%, #e9e6dc 100%);
+        color: #b0ada5;
+        font-size: 3rem;
+    }
+
+    .badge-special {
+        position: absolute;
+        bottom: 10px;
+        left: 10px;
+        background: #4a7c59;
+        color: white;
+        padding: 0.4rem 0.8rem;
+        border-radius: 5px;
+        font-size: 0.7rem;
+        font-weight: 700;
+        text-transform: uppercase;
+    }
+
+    .dish-info {
+        padding: 1.25rem;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .dish-category {
+        color: #999;
+        font-size: 0.8rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin: 0 0 0.5rem 0;
+    }
+
+    .dish-name {
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: #3e2723;
+        margin: 0 0 0.75rem 0;
+        line-height: 1.3;
+    }
+
+    .dish-name a {
+        color: #3e2723;
+        text-decoration: none;
+        transition: color 0.3s ease;
+    }
+
+    .dish-name a:hover {
+        color: #4a7c59;
+    }
+
+    .dish-price {
+        font-size: 1.3rem;
+        font-weight: 700;
+        color: #d32f2f;
+        margin-bottom: 1rem;
+    }
+
+    .btn-order {
+        background: #4a7c59;
+        color: white;
+        border: none;
+        padding: 0.65rem 1.5rem;
+        border-radius: 5px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        width: 100%;
+        margin-top: auto;
+    }
+
+    .btn-order:hover {
+        background: #3d6349;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(74, 124, 89, 0.3);
+    }
+
+    /* Empty State */
+    .empty-state {
+        text-align: center;
+        padding: 5rem 2rem;
+        color: #666;
+    }
+
+    .empty-state i {
+        color: #ddd;
+        margin-bottom: 1.5rem;
+    }
+
+    /* Pagination */
+    .pagination-section {
+        margin-top: 3rem;
+        display: flex;
+        justify-content: center;
+    }
+
+    .pagination {
+        display: flex !important;
+        flex-direction: row !important;
+        flex-wrap: wrap;
+        padding-left: 0;
+        list-style: none;
+        gap: 0.5rem;
+        margin: 0;
+    }
+
+    .pagination .page-item {
+        list-style: none;
+    }
+
+    .pagination .page-link {
+        color: #3e2723;
+        border: 2px solid #e0ddd5;
+        border-radius: 8px;
+        padding: 0.5rem 1rem;
+        transition: all 0.3s ease;
+        display: inline-block;
+        text-decoration: none;
+        background: white;
+    }
+
+    .pagination .page-link:hover {
+        background: #4a7c59;
+        color: white;
+        border-color: #4a7c59;
+    }
+
+    .pagination .page-item.active .page-link {
+        background: #4a7c59;
+        border-color: #4a7c59;
+        color: white;
+    }
+
+    .pagination .page-item.disabled .page-link {
+        color: #ccc;
+        pointer-events: none;
+        background: #f5f5f5;
+    }
+
+    /* Responsive */
+    @@media (max-width: 992px) {
+        .filter-wrapper {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .filter-controls {
+            justify-content: space-between;
+        }
+
+        .menu-grid {
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+        }
+    }
+
+    @@media (max-width: 768px) {
+        .quick-actions {
+            gap: 1.5rem;
+        }
+
+        .action-icon {
+            width: 60px;
+            height: 60px;
+        }
+
+        .action-icon i {
+            font-size: 1.5rem;
+        }
+
+        .action-btn span {
+            font-size: 0.85rem;
+        }
+
+        .search-input {
+            width: 150px;
+        }
+
+        .menu-grid {
+            grid-template-columns: 1fr;
+            gap: 1.25rem;
+        }
+
+        .dish-image-link {
+            height: 200px;
+        }
+    }
+</style>
+
+@section Scripts {
+    <script>
+        // Ensure jQuery is loaded
+        if (typeof jQuery === 'undefined') {
+            console.error('jQuery is not loaded!');
+        } else {
+            console.log('jQuery version:', jQuery.fn.jquery);
+        }
+
+        $(document).ready(function() {
+            console.log('Menu page scripts loaded');
+            
+            // Event delegation for Order buttons - use direct click handler for better compatibility
+            $('.btn-order').on('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                var dishId = $(this).attr('data-dish-id') || $(this).data('dish-id');
+                
+                if (!dishId) {
+                    console.error('Dish ID not found!');
+                    alert('Không tìm thấy mã món ăn. Vui lòng thử lại!');
+                    return;
+                }
+                
+                console.log('Adding dish to cart, ID:', dishId);
+                
+                // Disable button to prevent double-click
+                var $btn = $(this);
+                var originalText = $btn.html();
+                $btn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin me-1"></i> Đang thêm...');
+                
+                $.ajax({
+                    url: '/Cart/AddToCart',
+                    type: 'POST',
+                    data: {
+                        dishId: parseInt(dishId),
+                        quantity: 1
+                    },
+                    success: function(data) {
+                        console.log('AddToCart response:', data);
+                        
+                        // Re-enable button
+                        $btn.prop('disabled', false).html(originalText);
+                        
+                        if (data && data.success) {
+                            // Update cart count
+                            if ($('#cartCount').length) {
+                                $('#cartCount').text(data.cartCount || 0);
+                            }
+                            
+                            // Show success toast
+                            showToast('success', '<i class="fas fa-check-circle me-2"></i> Đã thêm vào giỏ hàng!');
+                        } else {
+                            showToast('danger', data.message || 'Có lỗi xảy ra khi thêm vào giỏ hàng!');
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('AJAX Error:', {
+                            status: status,
+                            error: error,
+                            responseText: xhr.responseText,
+                            statusCode: xhr.status
+                        });
+                        
+                        // Re-enable button
+                        $btn.prop('disabled', false).html(originalText);
+                        
+                        showToast('danger', 'Có lỗi kết nối. Vui lòng thử lại!');
+                    }
+                });
+            });
+            
+            // Helper function to show toast notification
+            function showToast(type, message) {
+                var bgClass = type === 'success' ? 'bg-success' : 'bg-danger';
+                var toast = $('<div class="position-fixed bottom-0 end-0 p-3" style="z-index:9999">' +
+                    '<div class="toast show align-items-center text-white ' + bgClass + ' border-0" role="alert">' +
+                        '<div class="d-flex">' +
+                            '<div class="toast-body">' + message + '</div>' +
+                            '<button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>' +
+                        '</div>' +
+                    '</div>' +
+                '</div>');
+                
+                $('body').append(toast);
+                
+                // Auto remove after 3 seconds
+                setTimeout(function() {
+                    toast.fadeOut(300, function() {
+                        $(this).remove();
+                    });
+                }, 3000);
+            }
+        });
+    </script>
+}

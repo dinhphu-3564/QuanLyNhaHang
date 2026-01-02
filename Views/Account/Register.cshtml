@@ -1,0 +1,233 @@
+@{
+    ViewData["Title"] = "Đăng ký tài khoản";
+}
+
+<style>
+    .auth-page {
+        min-height: 100vh;
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        padding-top: 2rem;
+    }
+    .auth-card {
+        background: white;
+        border-radius: 20px;
+        box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+        overflow: hidden;
+        max-width: 900px;
+        margin: 0 auto;
+    }
+    .auth-left {
+        background: linear-gradient(135deg, #4d2125 0%, #6b2d32 100%);
+        color: white;
+        padding: 3rem;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+    .auth-left h2 {
+        font-size: 2rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+    }
+    .auth-left p {
+        opacity: 0.9;
+        margin-bottom: 2rem;
+    }
+    .auth-features li {
+        margin-bottom: 0.75rem;
+        display: flex;
+        align-items: center;
+    }
+    .auth-features li i {
+        color: #ffc107;
+        margin-right: 0.75rem;
+        font-size: 1.1rem;
+    }
+    .auth-right {
+        padding: 3rem;
+    }
+    .auth-right h3 {
+        color: #4d2125;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+    }
+    .auth-right .subtitle {
+        color: #6c757d;
+        margin-bottom: 2rem;
+    }
+    .form-control-auth {
+        border: 2px solid #e9ecef;
+        border-radius: 12px;
+        padding: 0.875rem 1.25rem;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+    }
+    .form-control-auth:focus {
+        border-color: #4d2125;
+        box-shadow: 0 0 0 0.2rem rgba(77, 33, 37, 0.15);
+    }
+    .btn-auth {
+        background: linear-gradient(135deg, #4d2125 0%, #6b2d32 100%);
+        border: none;
+        padding: 0.875rem 2rem;
+        font-size: 1.1rem;
+        font-weight: 600;
+        border-radius: 50px;
+        color: white;
+        width: 100%;
+        transition: all 0.3s ease;
+    }
+    .btn-auth:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 30px rgba(77, 33, 37, 0.4);
+        color: white;
+    }
+    .input-group-auth {
+        position: relative;
+        margin-bottom: 1rem;
+    }
+    .input-group-auth i {
+        position: absolute;
+        left: 1rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #6c757d;
+    }
+    .input-group-auth input {
+        padding-left: 3rem;
+    }
+    .password-strength {
+        height: 4px;
+        background: #e9ecef;
+        border-radius: 2px;
+        margin-top: 0.5rem;
+        overflow: hidden;
+    }
+    .password-strength-bar {
+        height: 100%;
+        width: 0;
+        transition: all 0.3s ease;
+    }
+    .password-strength-bar.weak { width: 33%; background: #dc3545; }
+    .password-strength-bar.medium { width: 66%; background: #ffc107; }
+    .password-strength-bar.strong { width: 100%; background: #28a745; }
+    @@media (max-width: 767px) {
+        .auth-left {
+            display: none;
+        }
+    }
+</style>
+
+<div class="auth-page">
+    <div class="container py-4">
+        <div class="auth-card">
+            <div class="row g-0">
+                <!-- Left Side -->
+                <div class="col-md-5 auth-left">
+                    <div>
+                        <h2><i class="fas fa-utensils me-2"></i>Nhà hàng Việt</h2>
+                        <p>Tạo tài khoản để trở thành thành viên và nhận nhiều ưu đãi hấp dẫn.</p>
+                        <ul class="auth-features list-unstyled">
+                            <li><i class="fas fa-gift"></i>Nhận 100 điểm khi đăng ký</li>
+                            <li><i class="fas fa-percent"></i>Giảm 10% đơn hàng đầu tiên</li>
+                            <li><i class="fas fa-birthday-cake"></i>Ưu đãi sinh nhật đặc biệt</li>
+                            <li><i class="fas fa-star"></i>Tích điểm đổi quà</li>
+                            <li><i class="fas fa-bell"></i>Thông báo khuyến mãi sớm nhất</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Right Side - Register Form -->
+                <div class="col-md-7 auth-right">
+                    <h3><i class="fas fa-user-plus me-2"></i>Đăng ký tài khoản</h3>
+                    <p class="subtitle">Tham gia cùng hàng nghìn thành viên khác!</p>
+
+                    @if (!ViewData.ModelState.IsValid)
+                    {
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+                            {
+                                <div><i class="fas fa-exclamation-circle me-2"></i>@error.ErrorMessage</div>
+                            }
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    }
+
+                    <form asp-action="Register" method="post">
+                        <div class="input-group-auth">
+                            <i class="fas fa-user"></i>
+                            <input type="text" name="fullName" class="form-control form-control-auth" 
+                                   placeholder="Họ và tên *" required autofocus />
+                        </div>
+
+                        <div class="input-group-auth">
+                            <i class="fas fa-phone"></i>
+                            <input type="tel" name="phone" class="form-control form-control-auth" 
+                                   placeholder="Số điện thoại *" required />
+                        </div>
+
+                        <div class="input-group-auth">
+                            <i class="fas fa-envelope"></i>
+                            <input type="email" name="email" class="form-control form-control-auth" 
+                                   placeholder="Email (không bắt buộc)" />
+                        </div>
+
+                        <div class="input-group-auth">
+                            <i class="fas fa-lock"></i>
+                            <input type="password" name="password" id="password" class="form-control form-control-auth" 
+                                   placeholder="Mật khẩu *" required minlength="6" />
+                        </div>
+                        <div class="password-strength">
+                            <div class="password-strength-bar" id="passwordStrength"></div>
+                        </div>
+                        <small class="text-muted">Mật khẩu ít nhất 6 ký tự</small>
+
+                        <div class="input-group-auth mt-3">
+                            <i class="fas fa-lock"></i>
+                            <input type="password" name="confirmPassword" class="form-control form-control-auth" 
+                                   placeholder="Xác nhận mật khẩu *" required />
+                        </div>
+
+                        <div class="form-check mb-3">
+                            <input type="checkbox" class="form-check-input" id="terms" required>
+                            <label class="form-check-label" for="terms">
+                                Tôi đồng ý với <a href="#" style="color: #4d2125;">Điều khoản sử dụng</a> 
+                                và <a href="#" style="color: #4d2125;">Chính sách bảo mật</a>
+                            </label>
+                        </div>
+
+                        <button type="submit" class="btn btn-auth">
+                            <i class="fas fa-user-plus me-2"></i>Đăng ký
+                        </button>
+                    </form>
+
+                    <div class="text-center mt-4">
+                        <span class="text-muted">Đã có tài khoản?</span>
+                        <a asp-action="Login" class="fw-bold text-decoration-none" style="color: #4d2125;">
+                            Đăng nhập ngay
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.getElementById('password').addEventListener('input', function() {
+            var password = this.value;
+            var strengthBar = document.getElementById('passwordStrength');
+            
+            strengthBar.className = 'password-strength-bar';
+            
+            if (password.length >= 8 && /[A-Z]/.test(password) && /[0-9]/.test(password)) {
+                strengthBar.classList.add('strong');
+            } else if (password.length >= 6) {
+                strengthBar.classList.add('medium');
+            } else if (password.length > 0) {
+                strengthBar.classList.add('weak');
+            }
+        });
+    </script>
+}

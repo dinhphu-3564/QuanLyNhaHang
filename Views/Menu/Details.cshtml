@@ -1,0 +1,388 @@
+@model Web_QLNhaHang.Models.Dish
+@{
+    ViewData["Title"] = Model.DishName;
+}
+
+<style>
+    .product-detail-section {
+        background: #f5f2e8;
+        min-height: 100vh;
+    }
+
+    .product-layout {
+        display: flex;
+        gap: 0;
+        background: white;
+    }
+
+    .product-image-side {
+        width: 50%;
+        position: relative;
+    }
+
+    .product-image-side img {
+        width: 100%;
+        height: 100%;
+        min-height: 500px;
+        object-fit: cover;
+    }
+
+    .product-info-side {
+        width: 50%;
+        padding: 3rem;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        background: #fafafa;
+    }
+
+    .product-name {
+        font-size: 2rem;
+        font-weight: 700;
+        color: #2c3e50;
+        margin-bottom: 0.75rem;
+    }
+
+    .product-price {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #e74c3c;
+        margin-bottom: 1.5rem;
+    }
+
+    .product-desc {
+        color: #666;
+        font-size: 0.95rem;
+        line-height: 1.8;
+        margin-bottom: 2rem;
+    }
+
+    .order-controls {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .qty-wrapper {
+        display: flex;
+        align-items: center;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        overflow: hidden;
+    }
+
+    .qty-btn {
+        width: 38px;
+        height: 38px;
+        border: none;
+        background: #fff;
+        font-size: 1.2rem;
+        cursor: pointer;
+        color: #333;
+        transition: background 0.2s;
+    }
+
+    .qty-btn:hover {
+        background: #f0f0f0;
+    }
+
+    .qty-input {
+        width: 50px;
+        height: 38px;
+        border: none;
+        border-left: 1px solid #ddd;
+        border-right: 1px solid #ddd;
+        text-align: center;
+        font-weight: 600;
+        font-size: 1rem;
+    }
+
+    .btn-add-cart {
+        background: #2d5f3f;
+        color: white;
+        border: none;
+        padding: 0.75rem 2rem;
+        border-radius: 4px;
+        font-weight: 600;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        cursor: pointer;
+        transition: all 0.3s;
+    }
+
+    .btn-add-cart:hover {
+        background: #234930;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(45, 95, 63, 0.3);
+    }
+
+    .category-link {
+        color: #2d5f3f;
+        text-decoration: none;
+        font-size: 0.9rem;
+        display: inline-block;
+        margin-top: 1rem;
+    }
+
+    .category-link:hover {
+        text-decoration: underline;
+    }
+
+    /* Related Dishes */
+    .related-section {
+        padding: 3rem 0;
+    }
+
+    .related-title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #2c3e50;
+        margin-bottom: 1.5rem;
+    }
+
+    .related-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 1.5rem;
+    }
+
+    .related-card {
+        background: #fff;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+        text-decoration: none;
+        transition: all 0.3s;
+    }
+
+    .related-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+    }
+
+    .related-card img {
+        width: 100%;
+        height: 180px;
+        object-fit: cover;
+    }
+
+    .related-card-body {
+        padding: 1rem;
+    }
+
+    .related-card-name {
+        color: #2c3e50;
+        font-weight: 600;
+        font-size: 0.95rem;
+        margin-bottom: 0.5rem;
+        line-height: 1.3;
+    }
+
+    .related-card-price {
+        color: #e74c3c;
+        font-weight: 700;
+        font-size: 1rem;
+    }
+
+    @@media (max-width: 992px) {
+        .product-layout {
+            flex-direction: column;
+        }
+
+        .product-image-side,
+        .product-info-side {
+            width: 100%;
+        }
+
+        .product-image-side img {
+            min-height: 350px;
+        }
+
+        .related-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+
+    @@media (max-width: 576px) {
+        .product-info-side {
+            padding: 1.5rem;
+        }
+
+        .product-name {
+            font-size: 1.5rem;
+        }
+
+        .related-grid {
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+        }
+
+        .related-card img {
+            height: 140px;
+        }
+    }
+</style>
+
+<div class="product-detail-section">
+    <!-- Main Product Layout -->
+    <div class="product-layout">
+        <!-- Left: Image -->
+        <div class="product-image-side">
+            @if (!string.IsNullOrEmpty(Model.ImageUrl))
+            {
+                <img src="@Model.ImageUrl" alt="@Model.DishName">
+            }
+            else
+            {
+                <div style="height: 500px; background: #eee; display: flex; align-items: center; justify-content: center;">
+                    <i class="fas fa-utensils fa-5x text-muted"></i>
+                </div>
+            }
+        </div>
+
+        <!-- Right: Product Info -->
+        <div class="product-info-side">
+            <h1 class="product-name">@Model.DishName</h1>
+            <div class="product-price">@Model.Price.ToString("N0")đ</div>
+            
+            <p class="product-desc">@Model.Description</p>
+
+            @if (Model.IsAvailable)
+            {
+                <div class="order-controls">
+                    <div class="qty-wrapper">
+                        <button type="button" class="qty-btn" onclick="updateQty(-1)">−</button>
+                        <input type="number" id="quantity" class="qty-input" value="1" min="1" readonly>
+                        <button type="button" class="qty-btn" onclick="updateQty(1)">+</button>
+                    </div>
+                    <button class="btn-add-cart" onclick="addToCart(@Model.DishId)">
+                        <i class="fas fa-shopping-cart"></i> ORDER
+                    </button>
+                </div>
+
+                <a asp-controller="Menu" asp-action="Index" asp-route-categoryId="@Model.CategoryId" class="category-link">
+                    → Món ăn cùng nhóm
+                </a>
+            }
+            else
+            {
+                <div class="alert alert-warning">
+                    <i class="fas fa-exclamation-triangle"></i> Món ăn tạm thời hết hàng
+                </div>
+            }
+        </div>
+    </div>
+
+    <!-- Related Dishes -->
+    @if (ViewBag.RelatedDishes != null)
+    {
+        var relatedDishes = ViewBag.RelatedDishes as List<Web_QLNhaHang.Models.Dish>;
+        if (relatedDishes != null && relatedDishes.Any())
+        {
+            <div class="container related-section">
+                <h3 class="related-title">Món ăn liên quan</h3>
+                <div class="related-grid">
+                    @foreach (var dish in relatedDishes.Take(4))
+                    {
+                        <a asp-action="Details" asp-route-id="@dish.DishId" class="related-card">
+                            <img src="@dish.ImageUrl" alt="@dish.DishName">
+                            <div class="related-card-body">
+                                <div class="related-card-name">@dish.DishName</div>
+                                <div class="related-card-price">@dish.Price.ToString("N0")đ</div>
+                            </div>
+                        </a>
+                    }
+                </div>
+            </div>
+        }
+    }
+</div>
+
+@section Scripts {
+    <script>
+        function updateQty(change) {
+            let qtyInput = document.getElementById('quantity');
+            let currentQty = parseInt(qtyInput.value);
+            let newQty = currentQty + change;
+            if (newQty >= 1) {
+                qtyInput.value = newQty;
+            }
+        }
+
+        function addToCart(dishId) {
+            // Check if jQuery is loaded
+            if (typeof jQuery === 'undefined') {
+                alert('Đang tải trang, vui lòng đợi vài giây rồi thử lại!');
+                return;
+            }
+            
+            let quantity = parseInt($('#quantity').val()) || 1;
+            console.log('Adding to cart:', dishId, 'quantity:', quantity);
+
+            // Disable button
+            var $btn = $('.btn-add-cart');
+            var originalText = $btn.html();
+            $btn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i> Đang thêm...');
+
+            $.ajax({
+                url: '@Url.Action("AddToCart", "Cart")',
+                type: 'POST',
+                data: {
+                    dishId: dishId,
+                    quantity: quantity,
+                    notes: ''
+                },
+                success: function(data) {
+                    console.log('Response:', data);
+                    
+                    // Re-enable button
+                    $btn.prop('disabled', false).html(originalText);
+                    
+                    if (data && data.success) {
+                        // Update cart count
+                        if ($('#cartCount').length) {
+                            $('#cartCount').text(data.cartCount || 0);
+                        }
+                        
+                        // Show success toast
+                        showToast('success', '<i class="fas fa-check-circle me-2"></i> Đã thêm vào giỏ hàng!');
+                    } else {
+                        showToast('danger', data.message || 'Có lỗi xảy ra!');
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error:', error, xhr.responseText);
+                    
+                    // Re-enable button
+                    $btn.prop('disabled', false).html(originalText);
+                    
+                    showToast('danger', 'Có lỗi kết nối. Vui lòng thử lại!');
+                }
+            });
+        }
+        
+        // Helper function to show toast notification
+        function showToast(type, message) {
+            var bgClass = type === 'success' ? 'bg-success' : 'bg-danger';
+            var toast = $('<div class="position-fixed bottom-0 end-0 p-3" style="z-index:9999">' +
+                '<div class="toast show align-items-center text-white ' + bgClass + ' border-0" role="alert">' +
+                    '<div class="d-flex">' +
+                        '<div class="toast-body">' + message + '</div>' +
+                        '<button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>' +
+                    '</div>' +
+                '</div>' +
+            '</div>');
+            
+            $('body').append(toast);
+            
+            // Auto remove after 3 seconds
+            setTimeout(function() {
+                toast.fadeOut(300, function() {
+                    $(this).remove();
+                });
+            }, 3000);
+        }
+    </script>
+}

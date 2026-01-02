@@ -1,0 +1,222 @@
+@{
+    ViewData["Title"] = "Đăng nhập";
+}
+
+<style>
+    .auth-page {
+        min-height: 100vh;
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        padding-top: 2rem;
+    }
+    .auth-card {
+        background: white;
+        border-radius: 20px;
+        box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+        overflow: hidden;
+        max-width: 900px;
+        margin: 0 auto;
+    }
+    .auth-left {
+        background: linear-gradient(135deg, #4d2125 0%, #6b2d32 100%);
+        color: white;
+        padding: 3rem;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+    .auth-left h2 {
+        font-size: 2rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+    }
+    .auth-left p {
+        opacity: 0.9;
+        margin-bottom: 2rem;
+    }
+    .auth-features li {
+        margin-bottom: 0.75rem;
+        display: flex;
+        align-items: center;
+    }
+    .auth-features li i {
+        color: #ffc107;
+        margin-right: 0.75rem;
+        font-size: 1.1rem;
+    }
+    .auth-right {
+        padding: 3rem;
+    }
+    .auth-right h3 {
+        color: #4d2125;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+    }
+    .auth-right .subtitle {
+        color: #6c757d;
+        margin-bottom: 2rem;
+    }
+    .form-control-auth {
+        border: 2px solid #e9ecef;
+        border-radius: 12px;
+        padding: 0.875rem 1.25rem;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+    }
+    .form-control-auth:focus {
+        border-color: #4d2125;
+        box-shadow: 0 0 0 0.2rem rgba(77, 33, 37, 0.15);
+    }
+    .btn-auth {
+        background: linear-gradient(135deg, #4d2125 0%, #6b2d32 100%);
+        border: none;
+        padding: 0.875rem 2rem;
+        font-size: 1.1rem;
+        font-weight: 600;
+        border-radius: 50px;
+        color: white;
+        width: 100%;
+        transition: all 0.3s ease;
+    }
+    .btn-auth:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 30px rgba(77, 33, 37, 0.4);
+        color: white;
+    }
+    .social-login {
+        display: flex;
+        gap: 1rem;
+        margin-top: 1.5rem;
+    }
+    .social-btn {
+        flex: 1;
+        padding: 0.75rem;
+        border: 2px solid #e9ecef;
+        border-radius: 12px;
+        background: white;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        text-decoration: none;
+        color: #333;
+    }
+    .social-btn:hover {
+        border-color: #4d2125;
+        background: #f8f9fa;
+    }
+    .social-btn.facebook { color: #1877f2; }
+    .social-btn.google { color: #ea4335; }
+    .divider {
+        display: flex;
+        align-items: center;
+        margin: 1.5rem 0;
+    }
+    .divider::before, .divider::after {
+        content: '';
+        flex: 1;
+        height: 1px;
+        background: #e9ecef;
+    }
+    .divider span {
+        padding: 0 1rem;
+        color: #6c757d;
+        font-size: 0.9rem;
+    }
+    .input-group-auth {
+        position: relative;
+        margin-bottom: 1rem;
+    }
+    .input-group-auth i {
+        position: absolute;
+        left: 1rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #6c757d;
+    }
+    .input-group-auth input {
+        padding-left: 3rem;
+    }
+    @@media (max-width: 767px) {
+        .auth-left {
+            display: none;
+        }
+    }
+</style>
+
+<div class="auth-page">
+    <div class="container py-4">
+        <div class="auth-card">
+            <div class="row g-0">
+                <!-- Left Side -->
+                <div class="col-md-5 auth-left">
+                    <div>
+                        <h2><i class="fas fa-utensils me-2"></i>Nhà hàng Việt</h2>
+                        <p>Đăng nhập để tận hưởng những ưu đãi đặc biệt và trải nghiệm tốt hơn.</p>
+                        <ul class="auth-features list-unstyled">
+                            <li><i class="fas fa-check-circle"></i>Tích điểm thành viên</li>
+                            <li><i class="fas fa-check-circle"></i>Ưu đãi sinh nhật đặc biệt</li>
+                            <li><i class="fas fa-check-circle"></i>Đặt bàn nhanh hơn</li>
+                            <li><i class="fas fa-check-circle"></i>Theo dõi đơn hàng dễ dàng</li>
+                            <li><i class="fas fa-check-circle"></i>Nhận thông báo khuyến mãi</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Right Side - Login Form -->
+                <div class="col-md-7 auth-right">
+                    <h3><i class="fas fa-sign-in-alt me-2"></i>Đăng nhập</h3>
+                    <p class="subtitle">Chào mừng bạn quay trở lại!</p>
+
+                    @if (!ViewData.ModelState.IsValid)
+                    {
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+                            {
+                                <div><i class="fas fa-exclamation-circle me-2"></i>@error.ErrorMessage</div>
+                            }
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    }
+
+                    <form asp-action="Login" method="post">
+                        <input type="hidden" name="returnUrl" value="@ViewBag.ReturnUrl" />
+                        
+                        <div class="input-group-auth">
+                            <i class="fas fa-user"></i>
+                            <input type="text" name="username" class="form-control form-control-auth" 
+                                   placeholder="Số điện thoại hoặc Email" required autofocus />
+                        </div>
+
+                        <div class="input-group-auth">
+                            <i class="fas fa-lock"></i>
+                            <input type="password" name="password" class="form-control form-control-auth" 
+                                   placeholder="Mật khẩu" required />
+                        </div>
+
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input" id="rememberMe">
+                                <label class="form-check-label" for="rememberMe">Ghi nhớ đăng nhập</label>
+                            </div>
+                            <a href="#" class="text-decoration-none" style="color: #4d2125;">Quên mật khẩu?</a>
+                        </div>
+
+                        <button type="submit" class="btn btn-auth">
+                            <i class="fas fa-sign-in-alt me-2"></i>Đăng nhập
+                        </button>
+                    </form>
+
+
+
+                    <div class="text-center mt-4">
+                        <span class="text-muted">Chưa có tài khoản?</span>
+                        <a asp-action="Register" class="fw-bold text-decoration-none" style="color: #4d2125;">
+                            Đăng ký ngay
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
