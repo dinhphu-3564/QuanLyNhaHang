@@ -33,7 +33,6 @@ namespace Web_QLNhaHang.Controllers
                     return RedirectToAction("Details", "Menu", new { id = review.DishId });
                 }
             }
-
             return RedirectToAction("Index", "Home");
         }
     }

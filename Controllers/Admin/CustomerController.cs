@@ -25,7 +25,6 @@ namespace Web_QLNhaHang.Controllers.Admin
                                         (c.PhoneNumber != null && c.PhoneNumber.Contains(searchTerm)) ||
                                         (c.Email != null && c.Email.Contains(searchTerm)));
             }
-
             var customers = await query.OrderByDescending(c => c.CreatedDate).ToListAsync();
             ViewBag.SearchTerm = searchTerm;
             return View(customers);
@@ -42,7 +41,6 @@ namespace Web_QLNhaHang.Controllers.Admin
             {
                 return NotFound();
             }
-
             return View(customer);
         }
     }

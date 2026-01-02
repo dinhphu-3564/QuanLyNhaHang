@@ -51,7 +51,6 @@ namespace Web_QLNhaHang.Controllers.Admin
             ViewBag.Stats = stats;
             ViewBag.RecentOrders = recentOrders;
             ViewBag.RecentBookings = recentBookings;
-
             return View();
         }
     }

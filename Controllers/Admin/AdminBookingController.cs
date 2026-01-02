@@ -14,7 +14,6 @@ namespace Web_QLNhaHang.Controllers.Admin
         {
             _context = context;
         }
-
         public async Task<IActionResult> Index(string? status)
         {
             var query = _context.Bookings
@@ -27,7 +26,6 @@ namespace Web_QLNhaHang.Controllers.Admin
             {
                 query = query.Where(b => b.Status == status);
             }
-
             var bookings = await query.OrderByDescending(b => b.CreatedDate).ToListAsync();
             ViewBag.Status = status;
             return View("~/Views/Admin/Booking/Index.cshtml", bookings);
@@ -45,7 +43,6 @@ namespace Web_QLNhaHang.Controllers.Admin
             {
                 return NotFound();
             }
-
             return View("~/Views/Admin/Booking/Details.cshtml", booking);
         }
 
@@ -57,7 +54,6 @@ namespace Web_QLNhaHang.Controllers.Admin
             {
                 return NotFound();
             }
-
             booking.Status = status;
 
             if (status == "Xác nhận" && booking.TableId.HasValue)
@@ -76,7 +72,6 @@ namespace Web_QLNhaHang.Controllers.Admin
                     table.Status = "Trống";
                 }
             }
-
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
